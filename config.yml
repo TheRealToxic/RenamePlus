@@ -1,4 +1,4 @@
-#Version: 1.2
+#Version: 1.3
 #Author: T0X1C
 Messages:
   OnlyPlayers: "&6&lRename&e&l+ &8> &7Only players can perform this command!"
@@ -20,6 +20,14 @@ Messages:
   SetloreMaxLength: "&6&lRename&e&l+ &8> &4You have reached the max length of characters! &7(&c%amount%&7/&c%maxamount%&7)"
   CannotSetloreAir: "&6&lRename&e&l+ &8> &4You must have an item in your hand!"
   SuccessfullySetlore: "&6&lRename&e&l+ &8> &7You have successfully added set the lore of your item!"
+
+  RemoveloreUsage: "&6&lRename&e&l+ &8> &7/removelore <number>"
+  CannotRemoveloreAir: "&6&lRename&e&l+ &8> &4You must have an item in your hand!"
+  InvalidLoreNumber: "&6&lRename&e&l+ &8> &4Invalid lore number (&7Your item only has &4%amount% &7lores&4)"
+  NoLore: "&6&lRename&e&l+ &8> &4Your item has no lore!"
+  No-: "&6&lRename&e&l+ &8> &4You cannot use -"
+  No0: "&6&lRename&e&l+ &8> &4Why would you remove the line 0 of the lore?"
+  SuccessfullyRemovedlore: "&6&lRename&e&l+ &8> &7You have successfully removed the line &c%line% &7from the lore of your item!"
 
 Sounds:
   #If it should play a sound
