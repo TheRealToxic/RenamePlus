@@ -7,6 +7,7 @@ import me.t0x1c.renameplus.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -23,50 +24,55 @@ public class RemoveloreCommand implements CommandExecutor {
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if(!(sender instanceof Player)) {
-			Bukkit.getConsoleSender().sendMessage(colorThis(pl.getConfig().getString("Messages.OnlyPlayers")));
+			Bukkit.getConsoleSender().sendMessage(pl.colorThis("messages.only-players"));
 			return true;
 		}
-		Player p = (Player) sender;
+		Player player = (Player) sender;
 		if(cmd.getName().equalsIgnoreCase("removelore")) {
-			if(p.hasPermission("RenamePlus.removelore")) {
+			if(player.hasPermission("RenamePlus.removelore")) {
 				if(args.length == 0) {
-					p.sendMessage(colorThis(pl.getConfig().getString("Messages.RemoveloreUsage")));
+					player.sendMessage(pl.colorThis("messages.removelore-usage"));
 					return true;
 				}
-				ItemStack i = p.getItemInHand();
+				ItemStack i = player.getItemInHand();
 				ItemMeta im = i.getItemMeta();
 				if(i.getType() == Material.AIR) {
-					p.sendMessage(colorThis(pl.getConfig().getString("Messages.CannotRemoveloreAir")));
+					player.sendMessage(pl.colorThis("messages.cannot-removelore-air"));
 					return true;
 				}
 				if(im.hasLore()) {
 					List<String> lore = im.getLore();
 					int number = Integer.parseInt(args[0]) - 1;
 					if(lore.size() < number) {
-						p.sendMessage(colorThis(pl.getConfig().getString("Messages.InvalidLoreNumber").replaceAll("%amount%", String.valueOf(im.getLore().size()))));
+						player.sendMessage(pl.colorThis("messages.invalid-lore-number").replaceAll("%amount%", String.valueOf(im.getLore().size())));
 						return true;
 					}
 					if(args[0].contains("-")) {
-						p.sendMessage(colorThis(pl.getConfig().getString("Messages.No-")));
+						player.sendMessage(pl.colorThis("messages.no-"));
 						return true;
 					}
 					if(args[0].contains("0")) {
-						p.sendMessage(colorThis(pl.getConfig().getString("Messages.No0")));
+						player.sendMessage(pl.colorThis("messages.no-0"));
 						return true;
 					}
 					lore.remove(number);
 					im.setLore(lore);
 					i.setItemMeta(im);
-					p.sendMessage(colorThis(pl.getConfig().getString("Messages.SuccessfullyRemovedlore").replaceAll("%line%", args[0])));
+					player.sendMessage(pl.colorThis("messages.successfully-removedlore").replaceAll("%lore%", colorThis(im.getLore().get(number))).replaceAll("%line%", args[0]));
+					if(pl.getConfig().getBoolean("sounds.enabled")) {
+			            player.playSound(player.getLocation(), Sound.valueOf(pl.getConfig().getString("sounds.success")), 1, 1);
+        			}
 					return true;
 				}
 				if(!im.hasLore()) {
-					p.sendMessage(colorThis(pl.getConfig().getString("Messages.NoLore")));
+					player.sendMessage(pl.colorThis("messages.no-lore"));
 					return true;
 				}
+				return true;
 			}
-			if(!p.hasPermission("RenamePlus.removelore")) {
-				p.sendMessage(colorThis(pl.getConfig().getString("Messages.NoPermissions")));
+			player.sendMessage(pl.colorThis("messages.no-permissions"));
+			if(pl.getConfig().getBoolean("sounds.enabled")) {
+				player.playSound(player.getLocation(), Sound.valueOf(pl.getConfig().getString("sounds.no-permissions")), 1, 1);	
 			}
 		}
 		return true;

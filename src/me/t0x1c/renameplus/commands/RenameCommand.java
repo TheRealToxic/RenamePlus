@@ -23,69 +23,61 @@ public class RenameCommand implements CommandExecutor {
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if(!(sender instanceof Player)) {
-			Bukkit.getConsoleSender().sendMessage(colorThis(pl.getConfig().getString("Messages.OnlyPlayers")));
+			Bukkit.getConsoleSender().sendMessage(pl.colorThis("messages.only-players"));
 			return true;
 		}
-		Player p = (Player) sender;
+		Player player = (Player) sender;
 		if(cmd.getName().equalsIgnoreCase("rename")) {
-			if(p.hasPermission("RenamePlus.rename")) {
+			if(player.hasPermission("RenamePlus.rename")) {
 				if(args.length == 0) {
-					p.sendMessage(colorThis(pl.getConfig().getString("Messages.RenameUsage")));
+					player.sendMessage(pl.colorThis("messages.rename-usage"));
 					return true;
 				}
-				for(String words : pl.getConfig().getStringList("Banned-Words")) {
+				for(String words : pl.getConfig().getStringList("banned-words")) {
 					if(StringUtils.containsIgnoreCase(name(args), words)) {
-						p.sendMessage(colorThis(pl.getConfig().getString("Messages.InappropriateWords")));
-						if(pl.getConfig().getBoolean("Sounds.Enabled")) {
-							p.playSound(p.getLocation(), Sound.valueOf(pl.getConfig().getString("Sounds.InappropriateWords")), 1, 1);
-						} else {
-							return true;
+						player.sendMessage(pl.colorThis("messages.inappropriate-words"));
+						if(pl.getConfig().getBoolean("sounds.enabled")) {
+							player.playSound(player.getLocation(), Sound.valueOf(pl.getConfig().getString("sounds.inappropriate-words")), 1, 1);
 						}
-						return true;
 					}
-				}
-				if(name(args).length() < pl.getConfig().getInt("RenameMaxLength")) {
-					p.sendMessage(colorThis(pl.getConfig().getString("Messages.RenameMaxLength").replaceAll("%amount%", String.valueOf(name(args).length())).replaceAll("%maxamount%", String.valueOf(pl.getConfig().getInt("RenameMaxLength")))));
 					return true;
 				}
-				ItemStack i = p.getItemInHand();
+				if(name(args).length() < pl.getConfig().getInt("settings.rename-max-length")) {
+					player.sendMessage(pl.colorThis("messages.rename-max-length").replaceAll("%amount%", String.valueOf(name(args).length())).replaceAll("%maxamount%", String.valueOf(pl.getConfig().getInt("settings.rename-max-length"))));
+					return true;
+				}
+				ItemStack i = player.getItemInHand();
 				ItemMeta im = i.getItemMeta();
 				if(i.getType() == Material.AIR) {
-					p.sendMessage(colorThis(pl.getConfig().getString("Messages.CannotRenameAir")));
+					player.sendMessage(pl.colorThis("messages.cannot-rename-air"));
 					return true;
 				}
 				if(name(args).contains("&")) {
-	        		if(!p.hasPermission("RenamePlus.colors")) {
-			            p.sendMessage(colorThis(pl.getConfig().getString("Messages.NoColors")));
+	        		if(!player.hasPermission("RenamePlus.colors")) {
+			            player.sendMessage(pl.colorThis("messages.no-colors"));
 			            return true;
 	        		}
 	        		im.setDisplayName(colorThis(name(args)));
 			        i.setItemMeta(im);
-			        p.updateInventory();
-			        p.sendMessage(colorThis(pl.getConfig().getString("Messages.SuccessfullyRenamed")));
-			        if(pl.getConfig().getBoolean("Sounds.Enabled")) {
-			            p.playSound(p.getLocation(), Sound.valueOf(pl.getConfig().getString("Sounds.Success")), 1, 1);
-			        } else {
-			            return true;
+			        player.updateInventory();
+			        player.sendMessage(pl.colorThis("messages.successfully-renamed").replaceAll("%name%", colorThis(name(args))));
+			        if(pl.getConfig().getBoolean("sounds.enabled")) {
+			            player.playSound(player.getLocation(), Sound.valueOf(pl.getConfig().getString("sounds.success")), 1, 1);
 			        }
-	        	} else {
-	        		im.setDisplayName(name(args));
-		            i.setItemMeta(im);
-		            p.updateInventory();
-		            p.sendMessage(colorThis(pl.getConfig().getString("Messages.SuccessfullyRenamed")));
-		            if(pl.getConfig().getBoolean("Sounds.Enabled")) {
-		                p.playSound(p.getLocation(), Sound.valueOf(pl.getConfig().getString("Sounds.Success")), 1, 1);
-		            } else {
-		                return true;
-		            }
+			        return true;
 	        	}
-			} else {
-				p.sendMessage(colorThis(pl.getConfig().getString("Messages.NoPermissions")));
-				if(pl.getConfig().getBoolean("Sounds.Enabled")) {
-					p.playSound(p.getLocation(), Sound.valueOf(pl.getConfig().getString("Sounds.NoPermissions")), 1, 1);
-				} else {
-					return true;
-				}
+				im.setDisplayName(name(args));
+	            i.setItemMeta(im);
+	            player.updateInventory();
+	            player.sendMessage(pl.colorThis("messages.successfully-renamed").replaceAll("%name%", colorThis(name(args))));
+	            if(pl.getConfig().getBoolean("sounds.enabled")) {
+	                player.playSound(player.getLocation(), Sound.valueOf(pl.getConfig().getString("sounds.success")), 1, 1);
+	            }
+	            return true;
+			}
+			player.sendMessage(pl.colorThis("messages.no-permissions"));
+			if(pl.getConfig().getBoolean("sounds.enabled")) {
+				player.playSound(player.getLocation(), Sound.valueOf(pl.getConfig().getString("sounds.no-permissions")), 1, 1);	
 			}
 		}
 		return true;

@@ -26,40 +26,38 @@ public class AddloreCommand implements CommandExecutor {
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if(!(sender instanceof Player)) {
-			Bukkit.getConsoleSender().sendMessage(colorThis(pl.getConfig().getString("Messages.OnlyPlayers")));
+			Bukkit.getConsoleSender().sendMessage(pl.colorThis("messages.only-players"));
 			return true;
 		}
-		Player p = (Player) sender;
+		Player player = (Player) sender;
 		if(cmd.getName().equalsIgnoreCase("addlore")) {
-			if(p.hasPermission("RenamePlus.addlore")) {
+			if(player.hasPermission("RenamePlus.addlore")) {
 				if(args.length == 0) {
-					p.sendMessage(colorThis(pl.getConfig().getString("Messages.AddloreUsage")));
+					player.sendMessage(pl.colorThis("messages.addlore-usage"));
 					return true;
 				}
-				for(String words : pl.getConfig().getStringList("Banned-Words")) {
+				for(String words : pl.getConfig().getStringList("banned-words")) {
 					if(StringUtils.containsIgnoreCase(lore(args), words)) {
-						p.sendMessage(colorThis(pl.getConfig().getString("Messages.InappropriateWords")));
-						if(pl.getConfig().getBoolean("Sounds.Enabled")) {
-							p.playSound(p.getLocation(), Sound.valueOf(pl.getConfig().getString("Sounds.InappropriateWords")), 1, 1);
-						} else {
-							return true;
+						player.sendMessage(pl.colorThis("messages.inappropriate-words"));
+						if(pl.getConfig().getBoolean("sounds.enabled")) {
+							player.playSound(player.getLocation(), Sound.valueOf(pl.getConfig().getString("sounds.inappropriate-words")), 1, 1);
 						}
-						return true;
 					}
-				}
-				if(lore(args).length() < pl.getConfig().getInt("AddloreMaxLength")) {
-					p.sendMessage(colorThis(pl.getConfig().getString("Messages.AddloreMaxLength").replaceAll("%amount%", String.valueOf(lore(args).length())).replaceAll("%maxamount%", String.valueOf(pl.getConfig().getInt("AddloreMaxLength")))));
 					return true;
 				}
-				ItemStack i = p.getItemInHand();
+				if(lore(args).length() < pl.getConfig().getInt("settings.addlore-max-length")) {
+					player.sendMessage(pl.colorThis("messages.addlore-max-length").replaceAll("%amount%", String.valueOf(lore(args).length())).replaceAll("%maxamount%", String.valueOf(pl.getConfig().getInt("settings.addlore-max-length"))));
+					return true;
+				}
+				ItemStack i = player.getItemInHand();
 				ItemMeta im = i.getItemMeta();
 				if(i.getType() == Material.AIR) {
-					p.sendMessage(colorThis(pl.getConfig().getString("Messages.CannotAddloreAir")));
+					player.sendMessage(pl.colorThis("messages.cannot-addlore-air"));
 					return true;
 				}
 				if(lore(args).contains("&")) {
-	        		if(!p.hasPermission("RenamePlus.colors")) {
-	        			p.sendMessage(colorThis(pl.getConfig().getString("Messages.NoColors")));
+	        		if(!player.hasPermission("RenamePlus.colors")) {
+	        			player.sendMessage(pl.colorThis("messages.no-colors"));
 	        			return true;
 	        		}
 	        		if(im.hasLore()) {
@@ -67,24 +65,20 @@ public class AddloreCommand implements CommandExecutor {
 		        		lore.add(colorThis(lore(args)));
 		        		im.setLore(lore);
 		        		i.setItemMeta(im);
-				        p.updateInventory();
-				        p.sendMessage(colorThis(pl.getConfig().getString("Messages.SuccessfullyAddedlore")));
-				        if(pl.getConfig().getBoolean("Sounds.Enabled")) {
-				        	p.playSound(p.getLocation(), Sound.valueOf(pl.getConfig().getString("Sounds.Success")), 1, 1);
-				        } else {
-				            return true;
+				        player.updateInventory();
+				        player.sendMessage(pl.colorThis("messages.successfully-addedlore").replaceAll("%lore%", colorThis(lore(args))));
+				        if(pl.getConfig().getBoolean("sounds.enabled")) {
+				        	player.playSound(player.getLocation(), Sound.valueOf(pl.getConfig().getString("sounds.success")), 1, 1);
 				        }
 	        		} else {
 	        			List<String> lore = new ArrayList<String>();
 		        		lore.add(colorThis(lore(args)));
 		        		im.setLore(lore);
 		        		i.setItemMeta(im);
-				        p.updateInventory();
-				        p.sendMessage(colorThis(pl.getConfig().getString("Messages.SuccessfullyAddedlore")));
-				        if(pl.getConfig().getBoolean("Sounds.Enabled")) {
-				            p.playSound(p.getLocation(), Sound.valueOf(pl.getConfig().getString("Sounds.Success")), 1, 1);
-				        } else {
-				            return true;
+				        player.updateInventory();
+				        player.sendMessage(pl.colorThis("messages.successfully-addedlore"));
+				        if(pl.getConfig().getBoolean("sounds.enabled")) {
+				            player.playSound(player.getLocation(), Sound.valueOf(pl.getConfig().getString("sounds.success")), 1, 1);
 	        			}
 	        		}
 				} else if(!lore(args).contains("&")) {
@@ -92,21 +86,17 @@ public class AddloreCommand implements CommandExecutor {
 		            lore.add(lore(args));
 		            im.setLore(lore);
 		            i.setItemMeta(im);
-		            p.updateInventory();
-		            p.sendMessage(colorThis(pl.getConfig().getString("Messages.SuccessfullyAddedlore")));
-		            if(pl.getConfig().getBoolean("Sounds.Enabled")) {
-		                p.playSound(p.getLocation(), Sound.valueOf(pl.getConfig().getString("Sounds.Success")), 1, 1);
-		            } else {
-		                return true;
+		            player.updateInventory();
+		            player.sendMessage(pl.colorThis("messages.successfully-addedlore").replaceAll("%lore%", colorThis(lore(args))));
+		            if(pl.getConfig().getBoolean("sounds.enabled")) {
+		                player.playSound(player.getLocation(), Sound.valueOf(pl.getConfig().getString("sounds.success")), 1, 1);
 		            }
 		        }
-			} else {
-				p.sendMessage(colorThis(pl.getConfig().getString("Messages.NoPermissions")));
-				if(pl.getConfig().getBoolean("Sounds.Enabled")) {
-					p.playSound(p.getLocation(), Sound.valueOf(pl.getConfig().getString("Sounds.NoPermissions")), 1, 1);
-				} else {
-					return true;
-				}
+				return true;
+			}
+			player.sendMessage(pl.colorThis("messages.no-permissions"));
+			if(pl.getConfig().getBoolean("sounds.enabled")) {
+				player.playSound(player.getLocation(), Sound.valueOf(pl.getConfig().getString("sounds.no-permissions")), 1, 1);
 			}
 		}
 		return true;
